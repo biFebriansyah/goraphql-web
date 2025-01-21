@@ -29,7 +29,7 @@ A frontend for [goraphql-api](https://github.com/biFebriansyah/goraphql-api). De
 
 ```bash
 # Clone the repository
-$ git clone https://github.com/biFebriansyah/yapping-api-gateway.git
+$ git clone https://github.com/biFebriansyah/goraphql-web.git
 
 # Install Depencies
 $ pnpm install
