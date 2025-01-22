@@ -60,12 +60,12 @@ function Users() {
   const [deleteResult, deleteUser] = useMutation(UserDeleteMutation);
   const [result, reexecuteQuery] = useQuery({
     query: UserQuery,
-    variables: { page: 1, limit: 10, name: searchName },
+    variables: { page: pages, limit: 10, name: searchName },
   });
 
   const { data, error } = result;
   const userDetail: UsersDetail | undefined = data?.users;
-  if (error && error.message != 'failed find data product: data not found') {
+  if (error && error.message != '[GraphQL] failed find data user: data not found') {
     if (error.message == '[Network] Unauthorized') {
       setTokens('');
       return;
@@ -262,7 +262,7 @@ function Users() {
               Page {pages} limit 10
             </Typography>
             <Typography variant="small" color="blue-gray" className="font-normal text-gray-600">
-              Total 10
+              Total {userDetail?.meta.total || 0}
             </Typography>
           </div>
           <div className="flex gap-2">

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { MagnifyingGlassIcon, ChevronUpDownIcon } from '@heroicons/react/24/outline';
 import { PencilIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/solid';
 import {
@@ -49,6 +49,7 @@ const DeleteMutation = gql`
 `;
 
 function Product() {
+  const [searchName, setSearchName] = useState<string | null>(null);
   const [pages, setPages] = useState<number>(1);
   const [updateData, setUpdateData] = useState<ProdType | null>(null);
   const [open, setOpen] = useState(false);
@@ -57,13 +58,12 @@ function Product() {
   const [deleteResult, deleteProd] = useMutation(DeleteMutation);
   const [result, reexecuteQuery] = useQuery({
     query: UserQuery,
-    variables: { page: 1, limit: 10, name: null },
+    variables: { page: pages, limit: 10, name: searchName },
   });
 
   const { data, error } = result;
   const productsDetail: ProductsDetail | undefined = data?.products;
-
-  if (error && error.message != 'failed find data product: data not found') {
+  if (error && error.message != '[GraphQL] failed find data product: data not found') {
     if (error.message == '[Network] Unauthorized') {
       setTokens('');
       return;
@@ -80,6 +80,10 @@ function Product() {
       }
       reexecuteQuery({ requestPolicy: 'network-only' });
     });
+  };
+
+  const onInputChange = (el: ChangeEvent<HTMLInputElement>) => {
+    setSearchName(el.target.value);
   };
 
   const onPageChange = () => {
@@ -152,6 +156,7 @@ function Product() {
               crossOrigin="anonymous"
               type="text"
               label="Search"
+              onChange={onInputChange}
               icon={<MagnifyingGlassIcon className="h-5 w-5" />}
             />
           </div>
@@ -254,7 +259,7 @@ function Product() {
               Page {pages} limit 10
             </Typography>
             <Typography variant="small" color="blue-gray" className="font-normal text-gray-600">
-              Total 10
+              Total {productsDetail?.meta.total || 0}
             </Typography>
           </div>
           <div className="flex gap-2">
